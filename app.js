@@ -48,7 +48,7 @@ intents.onDefault([
 
 bot.dialog('/guess', [
     function (session) {
-        session.send('You have ' + session.userData.lives + ' lives left');
+        session.send('You have ' + session.userData.lives + ' ' + (session.userData.lives == 1 ? 'life' : 'lives') + ' left');
         builder.Prompts.text(session, session.userData.masked);
     },
     function (session, results) {
