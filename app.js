@@ -33,7 +33,7 @@ intents.matches(/^new/i, [
     function (session) {
         session.userData.lives = 5;
         session.userData.word = words[Math.floor(Math.random() * words.length)];
-        session.userData.masked = session.userData.word.replace(/[A-Z]/ig,'X')
+        session.userData.masked = session.userData.word.replace(/[A-Z]/ig,'?')
         session.beginDialog('/guess');
     }
 ]);
