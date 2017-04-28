@@ -26,45 +26,92 @@ server.post('/api/messages', connector.listen());
 var intents = new builder.IntentDialog();
 bot.dialog('/', intents);
 
+
 intents.matches(/^new/i, [
     function (session) {
+        session.userData.lives = 5;
         session.userData.word = "hello world";
         session.userData.masked = "XXXXX XXXXX";
         session.beginDialog('/guess');
     }
 ]);
 
+intents.onDefault([
+    function (session) {
+        session.beginDialog('/welcome');
+    }
+]);
+
+
 
 bot.dialog('/guess', [
     function (session) {
+        session.send('You have ' + session.userData.lives + ' lives left');
         builder.Prompts.text(session, session.userData.masked);
     },
     function (session, results) {
-        session.userData.letter = results.response;
-        var wordLength = session.userData.word.length;
-        maskedWord = "";
-        for(var i = 0; i < wordLength; i++)
+        if(results.response.length > 1)
         {
-            var letter = session.userData.word[i];
-            if(letter === results.response)
+            if(results.response === session.userData.word)
             {
-                maskedWord += letter;
+                session.userData.masked = session.userData.word;
+                session.beginDialog('/win');
             }
             else
             {
-                maskedWord += session.userData.masked[i];
+                session.userData.lives--;
+                if(session.userData.lives === 0)
+                {
+                    session.beginDialog('/gameover');
+                }
+                else
+                {
+                    session.beginDialog('/guess');
+                }
             }
-        }
-        session.userData.masked = maskedWord;
-        if(session.userData.masked == session.userData.word)
-        {
-            session.beginDialog('/win');
         }
         else
         {
-            session.beginDialog('/guess');
-        }
-        
+            session.userData.letter = results.response;
+            var wordLength = session.userData.word.length;
+            maskedWord = "";
+            var found = false;
+            for(var i = 0; i < wordLength; i++)
+            {
+                var letter = session.userData.word[i];
+                if(letter === results.response)
+                {
+                    maskedWord += letter;
+                    found = true;
+                }
+                else
+                {
+                    maskedWord += session.userData.masked[i];
+                }
+            }
+            session.userData.masked = maskedWord;
+            
+            if(found === false)
+            {
+                session.userData.lives--;
+            }
+
+            if(session.userData.masked == session.userData.word)
+            {
+                session.beginDialog('/win');
+            }
+            else
+            {
+                if(session.userData.lives === 0)
+                {
+                    session.beginDialog('/gameover');
+                }
+                else
+                {
+                    session.beginDialog('/guess');
+                }
+            }
+        }        
     }
 ]);
 
@@ -72,6 +119,21 @@ bot.dialog('/win', [
     function (session) {
         session.send(session.userData.masked);
         session.send('Well done, you win!');
+        session.endDialog();
+    }
+]);
+
+bot.dialog('/welcome', [
+    function (session) {
+        session.send("Hi I'm Hangman Bot. Type 'new' to start a new game.");
+        session.endDialog();
+    }
+]);
+
+bot.dialog('/gameover', [
+    function (session) {
+        session.send('Game Over! You lose!');
+        session.send(session.userData.word);
         session.endDialog();
     }
 ]);
