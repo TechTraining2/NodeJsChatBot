@@ -1,0 +1,25 @@
+{
+  "name": "nodejschatbot",
+  "version": "1.0.0",
+  "description": "This repo is for me to play with node and the bot framework",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/prjseal/NodeJsChatBot.git"
+  },
+  "author": "Paul Seal",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/prjseal/NodeJsChatBot/issues"
+  },
+  "homepage": "https://github.com/prjseal/NodeJsChatBot#readme",
+  "dependencies": {
+    "botbuilder": "^3.7.0",
+    "nodemon": "^1.11.0",
+    "restify": "^4.3.0"
+  }
+}
